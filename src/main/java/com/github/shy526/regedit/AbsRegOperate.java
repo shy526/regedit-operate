@@ -1,6 +1,6 @@
 package com.github.shy526.regedit;
 
-import com.github.shy526.regedit.oo.RegRootEnum;
+import com.github.shy526.regedit.obj.RegRootEnum;
 import lombok.Getter;
 
 @Getter

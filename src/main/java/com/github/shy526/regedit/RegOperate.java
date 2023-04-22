@@ -1,6 +1,6 @@
 package com.github.shy526.regedit;
 
-import com.github.shy526.regedit.oo.RegValue;
+import com.github.shy526.regedit.obj.RegValue;
 
 import java.util.List;
 import java.util.Set;

@@ -1,4 +1,4 @@
-package com.github.shy526.regedit.oo;
+package com.github.shy526.regedit.obj;
 
 import lombok.Data;
 

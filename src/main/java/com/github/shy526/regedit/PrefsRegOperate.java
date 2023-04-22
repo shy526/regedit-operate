@@ -1,9 +1,9 @@
 package com.github.shy526.regedit;
 
 
-import com.github.shy526.regedit.oo.RegRootEnum;
-import com.github.shy526.regedit.oo.RegTypeEnum;
-import com.github.shy526.regedit.oo.RegValue;
+import com.github.shy526.regedit.obj.RegRootEnum;
+import com.github.shy526.regedit.obj.RegTypeEnum;
+import com.github.shy526.regedit.obj.RegValue;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
