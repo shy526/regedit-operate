@@ -1,14 +1,15 @@
 package com.github.shy526.regedit.obj;
 
 
-import lombok.Getter;
 import com.sun.deploy.util.WinRegistry;
+import lombok.Getter;
+
 public enum RegRootEnum {
-    HKEY_CLASSES_ROOT(WinRegistry.HKEY_CLASSES_ROOT),
-    HKEY_CURRENT_USER(WinRegistry.HKEY_CURRENT_USER),
-    HKEY_LOCAL_MACHINE(WinRegistry.HKEY_LOCAL_MACHINE),
-    HKEY_USERS(WinRegistry.HKEY_USERS),
-    HKEY_CURRENT_CONFIG(WinRegistry.HKEY_CURRENT_CONFIG);
+    HKEY_CLASSES_ROOT(Integer.MIN_VALUE),
+    HKEY_CURRENT_USER(-2147483647),
+    HKEY_LOCAL_MACHINE(-2147483646),
+    HKEY_USERS(-2147483645),
+    HKEY_CURRENT_CONFIG(-2147483643);
 
     RegRootEnum(Integer code) {
         this.code = code;
