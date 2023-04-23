@@ -1,7 +1,6 @@
 package com.github.shy526.regedit.obj;
 
 
-import com.sun.deploy.util.WinRegistry;
 import lombok.Getter;
 
 public enum RegRootEnum {
