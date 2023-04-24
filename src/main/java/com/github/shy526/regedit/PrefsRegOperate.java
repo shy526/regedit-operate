@@ -37,7 +37,7 @@ public class PrefsRegOperate extends AbsRegOperate {
 
     /* Windows security masks */
     private static final int KEY_ALL_ACCESS = 0xf003f;
-
+    //region 所有反射方法集合
     private static final Method WINDOWS_REG_QUERY_VALUE_EX;
     private static final Method WINDOWS_REG_SET_VALUE_EX;
     private static final Method WINDOWS_REG_OPEN_KEY;
@@ -52,7 +52,7 @@ public class PrefsRegOperate extends AbsRegOperate {
     private static final Method WINDOWS_REG_DELETE_KEY;
     private static final Method WINDOWS_REG_CREATE_KEY_EX;
     private static final Method WINDOWS_REG_FLUSH_KEY;
-
+    //endregion
 
     static {
         try {

@@ -6,15 +6,10 @@ import com.github.shy526.regedit.obj.RegValue;
 import com.github.shy526.regedit.shell.CommonShellWin;
 import com.github.shy526.regedit.shell.ShellClient;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
@@ -23,14 +18,14 @@ import java.util.function.Function;
  */
 
 public class CmdRegOperate extends AbsRegOperate {
-
+    //region 使用到的指令合集
     private final static String GET_REG_VAL_LIST_CMD = "REG QUERY \"%s\"";
     private final static String GET_REG_VAL_CMD = "REG QUERY \"%s\" /v %s";
     private final static String SET_REG_VAL_CMD = "REG ADD \"%s\" /v %s /t %s /d %s /f";
     private final static String ADD_NODE_CMD = "REG ADD \"%s\" /f";
     private final static String DELETE_REG_VAL_CMD = "REG DELETE \"%s\"  /v %s /f";
     private final static String DELETE_NODE_CMD = "REG DELETE \"%s\" /f";
-
+    //endregion
 
     //region 解析value用到的所用
     private static final int REG_VAL_KEY_INDEX = 0;
@@ -38,24 +33,23 @@ public class CmdRegOperate extends AbsRegOperate {
     private static final int REG_VAL_INDEX = 2;
     private static final int REG_VAL_LENGTH = 3;
     private static final int REG_NODE_LENGTH = 1;
-    private static final String SEPARATOR = "    ";
+    private static final String SEPARATOR = "\\s{4}";
     //endregion
-    private final String rootKey;
 
     public CmdRegOperate(RegRootEnum rootEnum, String keyName) {
         super(rootEnum, keyName);
-        this.rootKey = rootEnum + "\\" + keyName;
+
 
     }
 
 
     @Override
     public Set<String> getNodes() {
-        String cmd = String.format(GET_REG_VAL_LIST_CMD, rootKey);
+        String cmd = String.format(GET_REG_VAL_LIST_CMD, getRootKey());
         List<String> result = shellParseLine(cmd, line -> {
             String[] temp = line.split(SEPARATOR);
             if (temp.length == REG_NODE_LENGTH) {
-                if (!line.equals(rootKey)) {
+                if (!line.equals( getRootKey())) {
                     return line;
                 }
             }
@@ -66,21 +60,21 @@ public class CmdRegOperate extends AbsRegOperate {
 
     @Override
     public boolean deleteNode(String name) {
-        String newKey = rootKey + "\\" + name;
+        String newKey = join(getRootKey(),name);
         String cmd = String.format(DELETE_NODE_CMD, newKey);
         return ShellClient.exec(cmd) == ShellClient.CODE_SUCCESS;
     }
 
     @Override
     public String getNode(String name) {
-        String newKey = rootKey + "\\" + name;
+        String newKey =join(getRootKey(),name);
         String cmd = String.format(GET_REG_VAL_LIST_CMD, newKey);
         return ShellClient.exec(cmd) == ShellClient.CODE_SUCCESS ? newKey : null;
     }
 
     @Override
     public boolean createNode(String name) {
-        String newKey = rootKey + "\\" + name;
+        String newKey = join(getRootKey(),name);
         String cmd = String.format(ADD_NODE_CMD, newKey);
         return ShellClient.exec(cmd) == ShellClient.CODE_SUCCESS;
     }
@@ -105,13 +99,13 @@ public class CmdRegOperate extends AbsRegOperate {
 
     @Override
     public List<RegValue> getRegValue() {
-        String cmd = String.format(GET_REG_VAL_LIST_CMD, rootKey);
+        String cmd = String.format(GET_REG_VAL_LIST_CMD,  getRootKey());
         return shellParseLine(cmd, this::parseRegValue);
     }
 
     @Override
     public RegValue getRegValue(String regValueName) {
-        String cmd = String.format(GET_REG_VAL_CMD, rootKey, regValueName);
+        String cmd = String.format(GET_REG_VAL_CMD,  getRootKey(), regValueName);
         List<RegValue> regValues = shellParseLine(cmd, this::parseRegValue);
         if (regValues.isEmpty()) {
             return null;
@@ -130,7 +124,7 @@ public class CmdRegOperate extends AbsRegOperate {
 
     @Override
     public boolean deleteRegValue(String regValueName) {
-        String cmd = String.format(DELETE_REG_VAL_CMD, rootKey, regValueName);
+        String cmd = String.format(DELETE_REG_VAL_CMD,  getRootKey(), regValueName);
         boolean flag = ShellClient.exec(cmd) == ShellClient.CODE_SUCCESS;
         if (flag) {
             flush();
@@ -153,7 +147,7 @@ public class CmdRegOperate extends AbsRegOperate {
             }
             value = sb.toString();
         }
-        String cmd = String.format(SET_REG_VAL_CMD, rootKey, regValue.getName(), type, value);
+        String cmd = String.format(SET_REG_VAL_CMD,  getRootKey(), regValue.getName(), type, value);
         boolean flag = ShellClient.exec(cmd) == ShellClient.CODE_SUCCESS;
         if (flag) {
             flush();

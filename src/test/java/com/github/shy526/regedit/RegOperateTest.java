@@ -1,10 +1,10 @@
 package com.github.shy526.regedit;
 
 import com.github.shy526.regedit.obj.RegRootEnum;
+import com.github.shy526.regedit.obj.RegTypeEnum;
 import com.github.shy526.regedit.obj.RegValue;
 import junit.framework.Assert;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -13,36 +13,33 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class RegOperateTest {
 
     public Stream<Arguments> getRegOperateTestObj() {
-       return Stream.of(
-                Arguments.arguments(new CmdRegOperate(RegRootEnum.HKEY_LOCAL_MACHINE,"SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment"))
+        return Stream.of(
+                Arguments.arguments(new CmdRegOperate(RegRootEnum.HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment"))
         );
     }
 
-    @ParameterizedTest
-    @MethodSource("getRegOperateTestObj")
-    void getKeys(RegOperate regOperate) {
-        List<RegValue> regValues = regOperate.getRegValue();
-        Assert.assertFalse(regValues.isEmpty());
-    }
-
+    @Order(3)
     @ParameterizedTest
     @MethodSource("getRegOperateTestObj")
     void getNodes(RegOperate regOperate) {
         Set<String> nodes = regOperate.getNodes();
-        System.out.println("nodes = " + nodes);
+        Assert.assertTrue(nodes.size() > 0);
     }
 
+    @Order(4)
     @ParameterizedTest
     @MethodSource("getRegOperateTestObj")
     void deleteNode(RegOperate regOperate) {
         boolean test1 = regOperate.deleteNode("test1");
-        System.out.println("test1 = " + test1);
+        Assert.assertTrue(test1);
     }
 
+    @Order(2)
     @ParameterizedTest
     @MethodSource("getRegOperateTestObj")
     void getNode(RegOperate regOperate) {
@@ -52,6 +49,7 @@ class RegOperateTest {
         Assert.assertNull(test3);
     }
 
+    @Order(1)
     @ParameterizedTest
     @MethodSource("getRegOperateTestObj")
     void createNode(RegOperate regOperate) {
@@ -63,26 +61,38 @@ class RegOperateTest {
     @MethodSource("getRegOperateTestObj")
     void getRegValue(RegOperate regOperate) {
         List<RegValue> regValue = regOperate.getRegValue();
-        Assert.assertTrue(regValue.size()>0);
+        Assert.assertTrue(regValue.size() > 0);
     }
 
+    @Order(6)
     @ParameterizedTest
     @MethodSource("getRegOperateTestObj")
     void testGetRegValue(RegOperate regOperate) {
-        RegValue javaHome = regOperate.getRegValue("JAVA_HOME");
-        System.out.println("javaHome = " + javaHome);
-      //  Assert.assertTrue(javaHome.size()>0);
+        RegValue test = regOperate.getRegValue("test1");
+        Assert.assertNotNull(test);
     }
 
-    @Test
-    void deleteRegValue() {
+    @Order(7)
+    @ParameterizedTest
+    @MethodSource("getRegOperateTestObj")
+    void deleteRegValue(RegOperate regOperate) {
+        boolean test1 = regOperate.deleteRegValue("test1");
+        Assert.assertTrue(test1);
     }
 
-    @Test
-    void setRegValue() {
+    @Order(5)
+    @ParameterizedTest
+    @MethodSource("getRegOperateTestObj")
+    void setRegValue(RegOperate regOperate) {
+        RegValue of = RegTypeEnum.REG_SZ.of("test1", "test");
+        boolean b = regOperate.setRegValue(of);
+        Assert.assertTrue(b);
     }
 
-    @Test
-    void flush() {
+    @Order(Integer.MAX_VALUE)
+    @ParameterizedTest
+    @MethodSource("getRegOperateTestObj")
+    void flush(RegOperate regOperate) {
+        regOperate.flush();
     }
 }
