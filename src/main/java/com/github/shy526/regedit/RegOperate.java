@@ -13,8 +13,18 @@ public interface RegOperate {
      */
     Set<String> getNodes();
 
+    /**
+     * 删除节点
+     * @param name name
+     * @return true
+     */
     boolean deleteNode(String name);
 
+    /**
+     * 获取单个节点
+     * @param name name
+     * @return String
+     */
     String getNode(String name);
     /**
      * 创建节点
@@ -36,7 +46,7 @@ public interface RegOperate {
     RegValue getRegValue(String regValueName);
 
     /**
-     *
+     * 删除
      * @param regValueName 键
      * @return boolean
      */
@@ -48,4 +58,9 @@ public interface RegOperate {
      * @return boolean
      */
     boolean setRegValue(RegValue regValue);
+
+    /**
+     * 刷新
+     */
+    void flush();
 }

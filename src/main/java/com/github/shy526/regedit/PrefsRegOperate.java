@@ -273,4 +273,9 @@ public class PrefsRegOperate extends AbsRegOperate {
             return result == ERROR_SUCCESS;
         }));
     }
+
+    @Override
+    public void flush() {
+
+    }
 }
