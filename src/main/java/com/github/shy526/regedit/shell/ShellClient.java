@@ -182,11 +182,4 @@ public class ShellClient {
         return task;
     }
 
-    public static void main(String[] args) {
-        String[] cmd=new String[]{"cmd","/c","taskkill", "/f", "/im", "explorer.exe","&","start","explorer.exe"};
-        int exec = exec(cmd, System.out::println, System.out::println);
-        System.out.println("exec = " + exec);
-
-    }
-
 }
