@@ -9,12 +9,14 @@ public interface RegOperate {
 
     /**
      * 当前key 下的subKey
+     *
      * @return Set<String>
      */
     Set<String> getNodes();
 
     /**
      * 删除节点
+     *
      * @param name name
      * @return true
      */
@@ -22,25 +24,31 @@ public interface RegOperate {
 
     /**
      * 获取单个节点
+     *
      * @param name name
      * @return String
      */
     String getNode(String name);
+
     /**
      * 创建节点
      * 如果节点已经创建会覆盖
+     *
      * @param name 节点名称
      * @return bo
      */
     boolean createNode(String name);
+
     /**
      * 获取 key 下的所有RegValue
-     * @return   List<RegValue>
+     *
+     * @return List<RegValue>
      */
     List<RegValue> getRegValue();
 
     /**
      * getChildren
+     *
      * @param regValueName 键
      * @return RegValue
      */
@@ -48,6 +56,7 @@ public interface RegOperate {
 
     /**
      * 删除
+     *
      * @param regValueName 键
      * @return boolean
      */
@@ -55,13 +64,14 @@ public interface RegOperate {
 
     /**
      * 设置
+     *
      * @param regValue regValue
      * @return boolean
      */
     boolean setRegValue(RegValue regValue);
 
     /**
-     * 刷新
+     * 用来刷新环境
      */
-    void flush();
+    void refreshEnvironment();
 }

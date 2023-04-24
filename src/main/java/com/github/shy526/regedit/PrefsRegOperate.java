@@ -99,8 +99,8 @@ public class PrefsRegOperate extends AbsRegOperate {
         return m;
     }
 
-    private int[] windowsRegOpenKey(int root, byte[] pathBytes, int securityMask) {
-        return invoke(WINDOWS_REG_OPEN_KEY, int[].class, root, pathBytes, securityMask);
+    private int[] windowsRegOpenKey(int root, byte[] pathBytes) {
+        return invoke(WINDOWS_REG_OPEN_KEY, int[].class, root, pathBytes, KEY_ALL_ACCESS);
     }
 
     private int windowsRegCloseKey(Integer nativeHandle) {
@@ -168,7 +168,7 @@ public class PrefsRegOperate extends AbsRegOperate {
         Integer nativeHandle = null;
         T result = null;
         try {
-            int[] openKeyResult = windowsRegOpenKey(getRootEnum().getCode(), stringToByteArray(getKeyName()), KEY_ALL_ACCESS);
+            int[] openKeyResult = windowsRegOpenKey(getRootEnum().getCode(), stringToByteArray(getKeyName()));
             if (openKeyResult[ERROR_CODE] != ERROR_SUCCESS) {
                 return null;
             }
@@ -177,9 +177,10 @@ public class PrefsRegOperate extends AbsRegOperate {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            int close = windowsRegFlushKey(nativeHandle);
-            close = windowsRegCloseKey(nativeHandle);
-
+            if (nativeHandle != null) {
+                int close = windowsRegFlushKey(nativeHandle);
+                close = windowsRegCloseKey(nativeHandle);
+            }
         }
         return result;
     }
@@ -203,7 +204,7 @@ public class PrefsRegOperate extends AbsRegOperate {
                 if (windowsName == null) {
                     continue;
                 }
-                result.add(toJavaValueString(windowsName));
+                result.add(join(getRootKey(), toJavaValueString(windowsName)));
             }
             return result;
         });
@@ -272,10 +273,5 @@ public class PrefsRegOperate extends AbsRegOperate {
             int result = windowsRegSetValueEx(nativeHandle, stringToByteArray(regValue.getName()), stringToByteArray(regValue.getValue()));
             return result == ERROR_SUCCESS;
         }));
-    }
-
-    @Override
-    public void flush() {
-
     }
 }

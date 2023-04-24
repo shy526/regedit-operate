@@ -125,11 +125,7 @@ public class CmdRegOperate extends AbsRegOperate {
     @Override
     public boolean deleteRegValue(String regValueName) {
         String cmd = String.format(DELETE_REG_VAL_CMD,  getRootKey(), regValueName);
-        boolean flag = ShellClient.exec(cmd) == ShellClient.CODE_SUCCESS;
-        if (flag) {
-            flush();
-        }
-        return flag;
+        return ShellClient.exec(cmd) == ShellClient.CODE_SUCCESS;
     }
 
     @Override
@@ -148,17 +144,11 @@ public class CmdRegOperate extends AbsRegOperate {
             value = sb.toString();
         }
         String cmd = String.format(SET_REG_VAL_CMD,  getRootKey(), regValue.getName(), type, value);
-        boolean flag = ShellClient.exec(cmd) == ShellClient.CODE_SUCCESS;
-        if (flag) {
-            flush();
-        }
-        return flag;
+
+        return  ShellClient.exec(cmd) == ShellClient.CODE_SUCCESS;
     }
 
-    @Override
-    public void flush() {
-        ShellClient.exec(CommonShellWin.POWER_SHELL_RESTART_EXPLORER);
-    }
+
 
 
 }
