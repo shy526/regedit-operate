@@ -68,30 +68,21 @@ public class CmdRegOperate extends AbsRegOperate {
     public boolean deleteNode(String name) {
         String newKey = rootKey + "\\" + name;
         String cmd = String.format(DELETE_NODE_CMD, newKey);
-        return ShellClient.exec(cmd) != ShellClient.CODE_SUCCESS;
+        return ShellClient.exec(cmd) == ShellClient.CODE_SUCCESS;
     }
 
     @Override
     public String getNode(String name) {
         String newKey = rootKey + "\\" + name;
         String cmd = String.format(GET_REG_VAL_LIST_CMD, newKey);
-        List<String> result = shellParseLine(cmd, (line) -> {
-            String[] temp = line.split(SEPARATOR);
-            if (temp.length == REG_NODE_LENGTH) {
-                if (line.equals(newKey)) {
-                    return line;
-                }
-            }
-            return null;
-        });
-        return result.isEmpty() ? null : result.get(0);
+        return ShellClient.exec(cmd) == ShellClient.CODE_SUCCESS ? newKey : null;
     }
 
     @Override
     public boolean createNode(String name) {
         String newKey = rootKey + "\\" + name;
         String cmd = String.format(ADD_NODE_CMD, newKey);
-        return ShellClient.exec(cmd) != ShellClient.CODE_SUCCESS;
+        return ShellClient.exec(cmd) == ShellClient.CODE_SUCCESS;
     }
 
     private <T> List<T> shellParseLine(String cmd, Function<String, T> function) {
@@ -123,7 +114,7 @@ public class CmdRegOperate extends AbsRegOperate {
         String cmd = String.format(GET_REG_VAL_CMD, rootKey, regValueName);
         List<RegValue> regValues = shellParseLine(cmd, this::parseRegValue);
         if (regValues.isEmpty()) {
-            return RegTypeEnum.REG_SZ.of(regValueName, null);
+            return null;
         }
         return regValues.get(0);
     }

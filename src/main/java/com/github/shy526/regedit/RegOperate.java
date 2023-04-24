@@ -28,6 +28,7 @@ public interface RegOperate {
     String getNode(String name);
     /**
      * 创建节点
+     * 如果节点已经创建会覆盖
      * @param name 节点名称
      * @return bo
      */
