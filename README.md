@@ -1,2 +1,2 @@
 # regedit-operate
-操作注册表
+提供了操作windows注册表的api
