@@ -8,10 +8,15 @@ import lombok.Getter;
 @Getter
 public abstract class AbsRegOperate implements RegOperate {
 
+    public static final String SYS_ENVIRONMENT = "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment";
+    public static final String USER_ENVIRONMENT = "Environment";
+    private final static String FIND_EXPLORER = String.format(CommonShellWin.CMD_SHELL_FIND_PROCESS_FORMAT, "explorer");
+    private final static String RESTART_EXPLORER = String.format(CommonShellWin.POWER_SHELL_STOP__PROCESS_FORMAT, "explorer");
     private static final String SEPARATE = "\\";
     private final RegRootEnum rootEnum;
     private final String keyName;
     private final String rootKey;
+
 
     public AbsRegOperate(RegRootEnum rootEnum, String keyName) {
         this.rootKey = join(rootEnum.name(), keyName);
@@ -30,7 +35,11 @@ public abstract class AbsRegOperate implements RegOperate {
 
     @Override
     public void refreshEnvironment() {
-        ShellClient.exec(CommonShellWin.POWER_SHELL_RESTART_EXPLORER);
+        int exec = ShellClient.exec(FIND_EXPLORER, result -> {
+            if (!"".equals(result)) {
+                ShellClient.exec(RESTART_EXPLORER);
+            }
+        });
     }
 
 

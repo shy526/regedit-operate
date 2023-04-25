@@ -217,17 +217,36 @@ public class PrefsRegOperate extends AbsRegOperate {
 
     @Override
     public String getNode(String name) {
-        return null;
+        return handle((nativeHandle) -> {
+
+            int[] infoKeys = windowsRegQueryInfoKey(nativeHandle);
+            if (infoKeys[ERROR_CODE] != ERROR_SUCCESS) {
+                return null;
+            }
+            int maxKeyLength = infoKeys[MAX_KEY_LENGTH];
+            int subKeysNumber = infoKeys[SUBKEYS_NUMBER];
+            if (subKeysNumber == 0) {
+                return null;
+            }
+            for (int i = 0; i < subKeysNumber; i++) {
+                byte[] windowsName = windowsRegEnumKeyEx(nativeHandle, i, maxKeyLength + 1);
+                if (windowsName == null) {
+                    continue;
+                }
+                String temp = toJavaValueString(windowsName);
+                if (temp.equals(name)) {
+                    return join(getRootKey(), temp);
+                }
+            }
+            return null;
+        });
     }
 
     @Override
     public boolean createNode(String name) {
         return Boolean.TRUE.equals(handle((nativeHandle) -> {
             int[] result = windowsRegCreateKeyEx(nativeHandle, stringToByteArray(name));
-            if (result[ERROR_CODE] == ERROR_SUCCESS) {
-                return result[DISPOSITION] == REG_CREATED_NEW_KEY;
-            }
-            return false;
+            return result[ERROR_CODE] == ERROR_SUCCESS;
         }));
     }
 
@@ -249,6 +268,9 @@ public class PrefsRegOperate extends AbsRegOperate {
                     continue;
                 }
                 byte[] valBytes = windowsRegQueryValueEx(nativeHandle, windowsName);
+                if (valBytes == null) {
+                    continue;
+                }
                 RegValue regItem = RegTypeEnum.REG_SZ.of(toJavaValueString(windowsName), toJavaValueString(valBytes));
                 result.add(regItem);
             }
@@ -260,7 +282,7 @@ public class PrefsRegOperate extends AbsRegOperate {
     public RegValue getRegValue(String regValueName) {
         return handle((nativeHandle) -> {
             byte[] valBytes = windowsRegQueryValueEx(nativeHandle, stringToByteArray(regValueName));
-            return RegTypeEnum.REG_SZ.of(regValueName, toJavaValueString(valBytes));
+            return valBytes == null ? null : RegTypeEnum.REG_SZ.of(regValueName, toJavaValueString(valBytes));
         });
     }
 

@@ -90,7 +90,7 @@ public class ShellClient {
      * @return 错误码
      */
     public static int exec(String cmd, Consumer<String> success, Consumer<String> fail) {
-        return process(cmd, success, null, null);
+        return process(cmd, success, fail, null);
     }
 
     /**

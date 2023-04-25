@@ -3,6 +3,7 @@ package com.github.shy526.regedit;
 import com.github.shy526.regedit.obj.RegRootEnum;
 import com.github.shy526.regedit.obj.RegTypeEnum;
 import com.github.shy526.regedit.obj.RegValue;
+import com.sun.org.apache.xpath.internal.operations.Or;
 import junit.framework.Assert;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,7 +20,8 @@ class RegOperateTest {
 
     public Stream<Arguments> getRegOperateTestObj() {
         return Stream.of(
-                Arguments.arguments(new CmdRegOperate(RegRootEnum.HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment"))
+                Arguments.arguments(new CmdRegOperate(RegRootEnum.HKEY_LOCAL_MACHINE, AbsRegOperate.SYS_ENVIRONMENT)),
+                Arguments.arguments(new PrefsRegOperate(RegRootEnum.HKEY_CURRENT_USER, AbsRegOperate.USER_ENVIRONMENT))
         );
     }
 
@@ -57,6 +59,7 @@ class RegOperateTest {
         Assert.assertTrue(test1);
     }
 
+    @Order(8)
     @ParameterizedTest
     @MethodSource("getRegOperateTestObj")
     void getRegValue(RegOperate regOperate) {
@@ -69,7 +72,9 @@ class RegOperateTest {
     @MethodSource("getRegOperateTestObj")
     void testGetRegValue(RegOperate regOperate) {
         RegValue test = regOperate.getRegValue("test1");
+        RegValue test2 = regOperate.getRegValue("test2");
         Assert.assertNotNull(test);
+        Assert.assertNull(test2);
     }
 
     @Order(7)
@@ -93,6 +98,6 @@ class RegOperateTest {
     @ParameterizedTest
     @MethodSource("getRegOperateTestObj")
     void flush(RegOperate regOperate) {
-        regOperate.flush();
+        regOperate.refreshEnvironment();
     }
 }

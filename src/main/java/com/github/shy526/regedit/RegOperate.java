@@ -7,6 +7,7 @@ import java.util.Set;
 
 public interface RegOperate {
 
+
     /**
      * 当前key 下的subKey
      *
@@ -74,4 +75,6 @@ public interface RegOperate {
      * 用来刷新环境
      */
     void refreshEnvironment();
+
+
 }
