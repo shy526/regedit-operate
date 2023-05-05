@@ -1,6 +1,8 @@
 package com.github.shy526.regedit.shell;
 
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
+@Slf4j
 public class ShellClient {
 
     //region 返回码
@@ -17,7 +20,6 @@ public class ShellClient {
     public static final int CODE_FAIL = 2;
     //endregion
     private static final int DEFAULT_TIME_OUT = 1000;
-
 
 
     /**
@@ -123,6 +125,7 @@ public class ShellClient {
      * @param timeOut 超时事件
      * @return 错误码
      */
+
     private static int process(Object cmd, Consumer<String> success, Consumer<String> fail, Integer timeOut) {
         Runtime runtime = Runtime.getRuntime();
         Process process = null;
@@ -140,14 +143,18 @@ public class ShellClient {
             timeOut = timeOut == null ? DEFAULT_TIME_OUT : timeOut;
             process.waitFor(timeOut, TimeUnit.MILLISECONDS);
             String error = errorTask.get(timeOut, TimeUnit.MILLISECONDS);
+
             if (fail != null) {
                 fail.accept(error);
             }
             if (!"".equals(error)) {
+                log.debug(cmd + ":" + error);
                 return CODE_FAIL;
             }
+            String successStr = resultTask.get(timeOut, TimeUnit.MILLISECONDS);
+            log.debug(cmd + ":" + successStr);
             if (success != null) {
-                success.accept(resultTask.get(timeOut, TimeUnit.MILLISECONDS));
+                success.accept(successStr);
             }
         } catch (Exception e) {
             return e instanceof TimeoutException ? CODE_TIME_OUT : CODE_FAIL;

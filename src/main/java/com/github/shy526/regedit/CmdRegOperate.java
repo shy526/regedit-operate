@@ -131,20 +131,9 @@ public class CmdRegOperate extends AbsRegOperate {
     public boolean setRegValue(RegValue regValue) {
         RegTypeEnum type = regValue.getType();
         String value = regValue.getValue();
-/*        if (type.equals(RegTypeEnum.REG_EXPAND_SZ)) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < value.length(); i++) {
-                char ch = value.charAt(i);
-                if (ch == '%') {
-                    sb.append("^");
-                }
-                sb.append(ch);
-            }
-            value = sb.toString();
-        }*/
         String cmd = String.format(SET_REG_VAL_CMD,  getRootKey(), regValue.getName(), type, value);
 
-        return  ShellClient.exec(cmd,System.out::println,System.out::println) == ShellClient.CODE_SUCCESS;
+        return  ShellClient.exec(cmd) == ShellClient.CODE_SUCCESS;
     }
 
 
