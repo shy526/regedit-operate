@@ -3,7 +3,6 @@ package com.github.shy526.regedit;
 import com.github.shy526.regedit.obj.RegRootEnum;
 import com.github.shy526.regedit.obj.RegTypeEnum;
 import com.github.shy526.regedit.obj.RegValue;
-import com.github.shy526.regedit.shell.CommonShellWin;
 import com.github.shy526.regedit.shell.ShellClient;
 
 import java.util.ArrayList;
