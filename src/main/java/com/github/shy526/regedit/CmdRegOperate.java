@@ -144,7 +144,7 @@ public class CmdRegOperate extends AbsRegOperate {
         }*/
         String cmd = String.format(SET_REG_VAL_CMD,  getRootKey(), regValue.getName(), type, value);
 
-        return  ShellClient.exec(cmd) == ShellClient.CODE_SUCCESS;
+        return  ShellClient.exec(cmd,System.out::println,System.out::println) == ShellClient.CODE_SUCCESS;
     }
 
 

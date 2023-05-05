@@ -4,10 +4,7 @@ import com.github.shy526.regedit.obj.RegRootEnum;
 import com.github.shy526.regedit.obj.RegTypeEnum;
 import com.github.shy526.regedit.obj.RegValue;
 import junit.framework.Assert;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -101,5 +98,20 @@ class RegOperateTest {
     @MethodSource("getRegOperateTestObj")
     void flush(RegOperate regOperate) {
         regOperate.refreshEnvironment();
+    }
+
+
+    @Test
+    void test(){
+        CmdRegOperate cmdRegOperate = new CmdRegOperate(RegRootEnum.HKEY_LOCAL_MACHINE, AbsRegOperate.SYS_ENVIRONMENT);
+        RegValue A = RegTypeEnum.REG_SZ.of("A", "test");
+
+        System.out.println( cmdRegOperate.setRegValue(A));
+        RegValue B = RegTypeEnum.REG_EXPAND_SZ.of("B", "%A%/bin");
+
+        System.out.println( cmdRegOperate.setRegValue(B));
+        RegValue C = RegTypeEnum.REG_EXPAND_SZ.of("C", "%A%/bin/cc");
+        System.out.println( cmdRegOperate.setRegValue(C));
+        cmdRegOperate.refreshEnvironment();
     }
 }
