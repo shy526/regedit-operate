@@ -21,7 +21,7 @@ public class CmdRegOperate extends AbsRegOperate {
     //region 使用到的指令合集
     private final static String GET_REG_VAL_LIST_CMD = "REG QUERY \"%s\"";
     private final static String GET_REG_VAL_CMD = "REG QUERY \"%s\" /v %s";
-    private final static String SET_REG_VAL_CMD = "REG ADD \"%s\" /v %s /t %s /d %s /f";
+    private final static String SET_REG_VAL_CMD = "REG ADD \"%s\" /v %s /t %s /d \"%s\" /f";
     private final static String ADD_NODE_CMD = "REG ADD \"%s\" /f";
     private final static String DELETE_REG_VAL_CMD = "REG DELETE \"%s\"  /v %s /f";
     private final static String DELETE_NODE_CMD = "REG DELETE \"%s\" /f";
@@ -132,7 +132,7 @@ public class CmdRegOperate extends AbsRegOperate {
     public boolean setRegValue(RegValue regValue) {
         RegTypeEnum type = regValue.getType();
         String value = regValue.getValue();
-        if (type.equals(RegTypeEnum.REG_EXPAND_SZ)) {
+/*        if (type.equals(RegTypeEnum.REG_EXPAND_SZ)) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < value.length(); i++) {
                 char ch = value.charAt(i);
@@ -142,7 +142,7 @@ public class CmdRegOperate extends AbsRegOperate {
                 sb.append(ch);
             }
             value = sb.toString();
-        }
+        }*/
         String cmd = String.format(SET_REG_VAL_CMD,  getRootKey(), regValue.getName(), type, value);
 
         return  ShellClient.exec(cmd) == ShellClient.CODE_SUCCESS;
