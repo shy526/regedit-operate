@@ -157,6 +157,7 @@ public class ShellClient {
                 success.accept(successStr);
             }
         } catch (Exception e) {
+            log.error(e.getMessage(),e);
             return e instanceof TimeoutException ? CODE_TIME_OUT : CODE_FAIL;
         } finally {
             if (process != null) {
