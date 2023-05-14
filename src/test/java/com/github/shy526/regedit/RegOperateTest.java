@@ -3,6 +3,7 @@ package com.github.shy526.regedit;
 import com.github.shy526.regedit.obj.RegRootEnum;
 import com.github.shy526.regedit.obj.RegTypeEnum;
 import com.github.shy526.regedit.obj.RegValue;
+import com.github.shy526.regedit.shell.ShellClient;
 import junit.framework.Assert;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -114,4 +115,16 @@ class RegOperateTest {
         System.out.println( cmdRegOperate.setRegValue(C));
         cmdRegOperate.refreshEnvironment();
     }
+    @Test
+    void test1(){
+        int exec = ShellClient.exec("cmd /c scala11 -version 2>&1", str->{
+            System.out.println("成功 = " + str);
+        }, str -> {
+            System.out.println("失败" + str);
+        });
+        System.out.println("exec = " + exec);
+    }
+
+
+
 }

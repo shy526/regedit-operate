@@ -15,9 +15,9 @@ import java.util.function.Consumer;
 public class ShellClient {
 
     //region 返回码
-    public static final int CODE_TIME_OUT = 1;
+    public static final int CODE_TIME_OUT = -2;
     public static final int CODE_SUCCESS = 0;
-    public static final int CODE_FAIL = 2;
+    public static final int CODE_FAIL = -1;
     //endregion
     private static final int DEFAULT_TIME_OUT = 1000;
 
@@ -149,7 +149,7 @@ public class ShellClient {
             }
             if (!"".equals(error)) {
                 log.debug(cmd + ":" + error);
-                return CODE_FAIL;
+                return process.exitValue();
             }
             String successStr = resultTask.get(timeOut, TimeUnit.MILLISECONDS);
             log.debug(cmd + ":" + successStr);
@@ -163,7 +163,7 @@ public class ShellClient {
                 process.destroy();
             }
         }
-        return CODE_SUCCESS;
+        return process.exitValue();
     }
 
     /**
