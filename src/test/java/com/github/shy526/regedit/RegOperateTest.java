@@ -105,19 +105,24 @@ class RegOperateTest {
     @Test
     void test(){
         CmdRegOperate cmdRegOperate = new CmdRegOperate(RegRootEnum.HKEY_LOCAL_MACHINE, AbsRegOperate.SYS_ENVIRONMENT);
-        RegValue A = RegTypeEnum.REG_SZ.of("A", "test");
-
-        System.out.println( cmdRegOperate.setRegValue(A));
+        RegValue path = cmdRegOperate.getRegValue("path");
+        System.out.println("path = " + path);
+        String value = path.getValue()+"%SCALA_HOME_SHY%\\bin";
+        path.setValue(value);
+        boolean b = cmdRegOperate.setRegValue(path);
+        cmdRegOperate.refreshEnvironment();
+      //  System.out.println("value = " + value);
+/*        System.out.println( cmdRegOperate.setRegValue(A));
         RegValue B = RegTypeEnum.REG_EXPAND_SZ.of("B", "%A%/bin");
 
         System.out.println( cmdRegOperate.setRegValue(B));
         RegValue C = RegTypeEnum.REG_EXPAND_SZ.of("C", "%A%/bin/cc");
         System.out.println( cmdRegOperate.setRegValue(C));
-        cmdRegOperate.refreshEnvironment();
+        cmdRegOperate.refreshEnvironment();*/
     }
     @Test
     void test1(){
-        int exec = ShellClient.exec("cmd /c scala11 -version 2>&1", str->{
+        int exec = ShellClient.exec("cmd /c scala -version 2>&1", str->{
             System.out.println("成功 = " + str);
         }, str -> {
             System.out.println("失败" + str);

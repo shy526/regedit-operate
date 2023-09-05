@@ -5,6 +5,8 @@ import com.github.shy526.regedit.shell.CommonShellWin;
 import com.github.shy526.regedit.shell.ShellClient;
 import lombok.Getter;
 
+import static com.github.shy526.regedit.shell.CommonShellWin.CMD_SHELL_RESTART_EXPLORER;
+
 @Getter
 public abstract class AbsRegOperate implements RegOperate {
 
@@ -37,7 +39,8 @@ public abstract class AbsRegOperate implements RegOperate {
     public void refreshEnvironment() {
         int exec = ShellClient.exec(FIND_EXPLORER, result -> {
             if (!"".equals(result)) {
-                ShellClient.exec(RESTART_EXPLORER);
+                ShellClient.exec(CMD_SHELL_RESTART_EXPLORER);
+                ShellClient.exec("setx 1 1 /m");
             }
         });
     }
