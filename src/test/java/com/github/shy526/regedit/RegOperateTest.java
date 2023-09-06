@@ -10,7 +10,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -104,13 +106,18 @@ class RegOperateTest {
 
     @Test
     void test(){
-        CmdRegOperate cmdRegOperate = new CmdRegOperate(RegRootEnum.HKEY_LOCAL_MACHINE, AbsRegOperate.SYS_ENVIRONMENT);
+
+        int exec = ShellClient.exec("setX 2 \"1 1\"",System.out::println,true);
+        System.out.println("exec = " + exec);
+
+
+/*        CmdRegOperate cmdRegOperate = new CmdRegOperate(RegRootEnum.HKEY_LOCAL_MACHINE, AbsRegOperate.SYS_ENVIRONMENT);
         RegValue path = cmdRegOperate.getRegValue("path");
         System.out.println("path = " + path);
         String value = path.getValue()+"%SCALA_HOME_SHY%\\bin";
         path.setValue(value);
         boolean b = cmdRegOperate.setRegValue(path);
-        cmdRegOperate.refreshEnvironment();
+        cmdRegOperate.refreshEnvironment();*/
       //  System.out.println("value = " + value);
 /*        System.out.println( cmdRegOperate.setRegValue(A));
         RegValue B = RegTypeEnum.REG_EXPAND_SZ.of("B", "%A%/bin");
