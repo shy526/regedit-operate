@@ -1,10 +1,7 @@
 package com.github.shy526.regedit.shell;
 
 
-import com.github.shy526.regedit.AbsRegOperate;
-import com.github.shy526.regedit.CmdRegOperate;
-import com.github.shy526.regedit.RegOperate;
-import com.github.shy526.regedit.obj.RegRootEnum;
+import com.github.shy526.regedit.obj.RegTypeEnum;
 import com.github.shy526.regedit.obj.RegValue;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,7 +15,8 @@ import java.util.Map;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 public class ShellClient {
@@ -165,10 +163,10 @@ public class ShellClient {
                 return CODE_FAIL;
             }
 
-            ProcessBuilder pb = new ProcessBuilder().command(command);
-
+            ProcessBuilder pb = new ProcessBuilder(command);
+            Map<String, String> environment = pb.environment();
             if (envRefresh) {
-                Map<String, String> environment = pb.environment();
+                Map<String, RegValue> newEnv = new HashMap<>();
                 exec("REG QUERY \"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment\"", result -> {
                     String[] lines = result.split("\r\n");
                     for (String line : lines) {
@@ -180,9 +178,19 @@ public class ShellClient {
                         if (temp.length != 3) {
                             continue;
                         }
-                        environment.put(temp[0], temp[2]);
+                        String key = temp[0];
+                        String val = temp[2];
+                        String type = temp[1];
+                        RegTypeEnum regTypeEnum = RegTypeEnum.find(type.trim());
+                        RegValue of = regTypeEnum.of(key.trim(), val.trim());
+                        newEnv.put(key, of);
                     }
                 });
+                for (Map.Entry<String, RegValue> item : newEnv.entrySet()) {
+                    String key = item.getKey();
+                    RegValue val = fillEnv(newEnv, item.getValue());
+                    environment.put(key, val.getValue());
+                }
             }
             process = pb.start();
             FutureTask<String> errorTask = getStreamData(process.getErrorStream());
@@ -221,6 +229,24 @@ public class ShellClient {
             }
         }
         return process.exitValue();
+    }
+
+    private static RegValue fillEnv(Map<String, RegValue> newEnv, RegValue val) {
+        if (RegTypeEnum.REG_EXPAND_SZ.equals(val.getType())) {
+            Pattern compile = Pattern.compile("%(\\w+)%");
+            Matcher matcher = compile.matcher(val.getValue());
+            while (matcher.find()) {
+                String group = matcher.group(1);
+                RegValue temp = newEnv.get(group);
+                if (temp != null) {
+                    fillEnv(newEnv, temp);
+                    val.setValue(val.getValue().replace(matcher.group(), temp.getValue()));
+                } else {
+                    log.error(group + "is null");
+                }
+            }
+        }
+        return val;
     }
 
     /**

@@ -107,7 +107,7 @@ class RegOperateTest {
     @Test
     void test(){
 
-        int exec = ShellClient.exec("setX 2 \"1 1\"",System.out::println,true);
+        int exec = ShellClient.exec("cmd.exe /c scala -version 2>&1",System.out::println,true);
         System.out.println("exec = " + exec);
 
 
