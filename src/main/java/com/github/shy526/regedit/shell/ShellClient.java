@@ -164,7 +164,7 @@ public class ShellClient {
             }
 
             ProcessBuilder pb = new ProcessBuilder(command);
-            Map<String, String> environment = pb.environment();
+            Map<String, String> oldEnv = pb.environment();
             if (envRefresh) {
                 Map<String, RegValue> newEnv = new HashMap<>();
                 exec("REG QUERY \"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment\"", result -> {
@@ -188,8 +188,8 @@ public class ShellClient {
                 });
                 for (Map.Entry<String, RegValue> item : newEnv.entrySet()) {
                     String key = item.getKey();
-                    RegValue val = fillEnv(newEnv, item.getValue());
-                    environment.put(key, val.getValue());
+                    RegValue val = fillEnv(newEnv, item.getValue(), oldEnv);
+                    oldEnv.put(key, val.getValue());
                 }
             }
             process = pb.start();
@@ -231,18 +231,25 @@ public class ShellClient {
         return process.exitValue();
     }
 
-    private static RegValue fillEnv(Map<String, RegValue> newEnv, RegValue val) {
-        if (RegTypeEnum.REG_EXPAND_SZ.equals(val.getType())) {
-            Pattern compile = Pattern.compile("%(\\w+)%");
-            Matcher matcher = compile.matcher(val.getValue());
-            while (matcher.find()) {
-                String group = matcher.group(1);
-                RegValue temp = newEnv.get(group);
-                if (temp != null) {
-                    fillEnv(newEnv, temp);
-                    val.setValue(val.getValue().replace(matcher.group(), temp.getValue()));
+    private static RegValue fillEnv(Map<String, RegValue> newEnv, RegValue val, Map<String, String> oldEnv) {
+        if (!RegTypeEnum.REG_EXPAND_SZ.equals(val.getType())) {
+            return val;
+        }
+        Pattern compile = Pattern.compile("%(\\w+)%");
+        Matcher matcher = compile.matcher(val.getValue());
+        while (matcher.find()) {
+            String group = matcher.group(1);
+            RegValue temp = newEnv.get(group);
+            if (temp != null) {
+                fillEnv(newEnv, temp, oldEnv);
+                val.setValue(val.getValue().replace(matcher.group(), temp.getValue()));
+            } else {
+                String str = oldEnv.get(group);
+                if (null != str) {
+                    val.setValue(val.getValue().replace(matcher.group(), str));
                 } else {
-                    log.error(group + "is null");
+                    log.error(val.getName() + ":" + group + "-> is null");
+                    System.out.println(val.getName() + ":" + group + "-> is null");
                 }
             }
         }
